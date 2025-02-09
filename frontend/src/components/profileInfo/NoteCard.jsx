@@ -1,5 +1,6 @@
 import React from "react";
 import { MdCreate, MdDelete, MdOutlinePushPin } from "react-icons/md";
+import { useNoteStore } from "../../store/noteStore";
 
 const NoteCard = ({
   title,
@@ -9,6 +10,7 @@ const NoteCard = ({
   inPinned,
   onEdit,
   onDelate,
+  noteId,
   onPinNote,
 }) => {
   return (
@@ -26,16 +28,16 @@ const NoteCard = ({
       <p className="text-xs mt-2 text-slate-600">{content.slice(0, 60)}</p>
 
       <div className="flex items-center justify-between gap-2 mt-2">
-        <div className="text-xs text-slate-500">{tags}</div>
+        <div className="text-xs text-slate-500">
+          {tags.map((tag) => `#${tag} `)}
+        </div>
         <div className="flex items-center gap-2">
-          <MdCreate
-            className="icon-btn hover:text-green-500"
-            onClick={onEdit}
-          />
-          <MdDelete
-            className="icon-btn hover:text-red-500"
-            onClick={onDelate}
-          />
+          <button onClick={onEdit}>
+            <MdCreate className="icon-btn hover:text-green-500" />
+          </button>
+          <button onClick={onDelate}>
+            <MdDelete className="icon-btn hover:text-red-500" />
+          </button>
         </div>
       </div>
     </div>

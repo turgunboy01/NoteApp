@@ -1,18 +1,25 @@
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import TagInput from "../../components/input/TagInput";
 import { MdClose } from "react-icons/md";
+import { useNoteStore } from "../../store/noteStore";
 
 const AddEditNote = ({ onClose, noteData, type }) => {
   const [tags, setTags] = useState([]);
   const [title, setTitle] = useState("");
   const [content, setContent] = useState("");
+  const { addNewNote, editNote } = useNoteStore();
 
   const [error, setError] = useState(null);
 
-  const addNewNote = async () => {};
-  const editNote = async () => {};
+  useEffect(() => {
+    if (noteData) {
+      setTitle(noteData.title || "");
+      setContent(noteData.content || "");
+      setTags(noteData.tags || []);
+    }
+  }, [noteData]);
 
-  const handleAddNote = () => {
+  const handleSave = () => {
     if (!title) {
       setError("please enter the title");
       return;
@@ -24,11 +31,15 @@ const AddEditNote = ({ onClose, noteData, type }) => {
     setError("");
 
     if (type === "edit") {
-      editNote();
+      editNote(noteData._id, title, content, tags);
     } else {
-      addNewNote();
+      addNewNote(title, content, tags);
     }
+    onClose();
   };
+
+  
+
   return (
     <div className="relative">
       <button
@@ -41,7 +52,7 @@ const AddEditNote = ({ onClose, noteData, type }) => {
         <label className="input-label">TITLE</label>
         <input
           type="text"
-          className=" text-2xl outline-none text-slate-950"
+          className=" text-xl outline-none text-slate-950 border border-slate-100 p-2 rounded"
           placeholder="Go to Gym At 5"
           value={title}
           onChange={({ target }) => setTitle(target.value)}
@@ -51,7 +62,7 @@ const AddEditNote = ({ onClose, noteData, type }) => {
         <label className="input-label">CONTENT</label>
         <textarea
           type="text"
-          className=" text-sm outline-none text-slate-950 bg-slate-50 p-2 rounded"
+          className=" text-sm outline-none text-slate-950 border border-slate-100 bg-slate-50 p-2 rounded"
           placeholder="Content"
           value={content}
           onChange={({ target }) => setContent(target.value)}
@@ -66,10 +77,10 @@ const AddEditNote = ({ onClose, noteData, type }) => {
       {error && <span className="text-red-500 text-xs pt-4">{error}</span>}
 
       <button
-        className=" w-full h-14 flex items-center justify-center text-white  bg-primary font-medium p-3 mt-5"
-        onClick={handleAddNote}
+        className="w-full h-14 flex items-center justify-center text-white bg-primary font-medium p-3 mt-5"
+        onClick={handleSave}
       >
-        Add
+        {type === "edit" ? "Update" : "Add"}
       </button>
     </div>
   );
